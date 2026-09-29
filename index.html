@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jurnal Prezențe & Tracker Orar — Psihologie ANUL II (2026–2027)</title>
+    <style>
+        :root {
+            --primary: #0f2c59;
+            --primary-hover: #1b4965;
+            --bg: #f4f6fa;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            
+            /* Green - Present */
+            --green-bg: #e6f4ea;
+            --green-border: #34a853;
+            --green-text: #137333;
+            --green-badge: #1e8e3e;
+
+            /* Red - Absent */
+            --red-bg: #fce8e6;
+            --red-border: #ea4335;
+            --red-text: #c5221f;
+            --red-badge: #d93025;
+
+            /* Neutral - Planned */
+            --neutral-bg: #ffffff;
+            --neutral-border: #d1d5db;
+            --neutral-badge: #4b5563;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 15px 12px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .header {
+            background: #ffffff;
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-top: 4px solid var(--primary);
+        }
+
+        .header-title h1 {
+            font-size: 20px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .header-title p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: #eef2f8;
+        }
+
+        /* CLOUD SYNC BAR */
+        .sync-bar {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 12.5px;
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .pulse-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #10b981;
+            display: inline-block;
+            box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* STATS DASHBOARD */
+        .stats-dashboard {
+            background: #ffffff;
+            padding: 18px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .stat-card {
+            background: #f9fafb;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card.present { border-left-color: var(--green-border); background: #f0fdf4; }
+        .stat-card.absent { border-left-color: var(--red-border); background: #fef2f2; }
+        .stat-card.rate { border-left-color: #3b82f6; background: #eff6ff; }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .stat-num {
+            font-size: 22px;
+            font-weight: 800;
+            margin-top: 3px;
+            color: #111827;
+        }
+
+        /* Subject Progress Breakdown */
+        .subjects-progress {
+            border-top: 1px solid var(--border);
+            padding-top: 14px;
+        }
+
+        .subjects-title {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .subj-bar-box {
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .subj-bar-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11.5px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .bar-track {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--green-badge);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* QUICK JUMP BAR */
+        .jump-bar {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 4px 2px 14px 2px;
+            margin-bottom: 12px;
+            scrollbar-width: thin;
+        }
+
+        .jump-btn {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 18px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s ease;
+        }
+
+        .jump-btn:hover, .jump-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .jump-btn.current {
+            border-color: #f59e0b;
+            color: #b45309;
+            background: #fef3c7;
+        }
+
+        /* WEEKS LIST */
+        .week-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+            margin-bottom: 18px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: border-color 0.2s ease;
+        }
+
+        .week-card.is-current {
+            border: 2px solid #f59e0b;
+        }
+
+        .week-header {
+            background: #f8fafc;
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .week-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .week-badge {
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .badge-impara { background: #dcfce7; color: #15803d; }
+        .badge-para { background: #dbeafe; color: #1e40af; }
+        .badge-current { background: #fef3c7; color: #b45309; }
+
+        .week-notice {
+            font-size: 11.5px;
+            color: #4b5563;
+            background: #fffbeb;
+            border-left: 3px solid #f59e0b;
+            padding: 6px 12px;
+            margin: 8px 16px 0 16px;
+            border-radius: 4px;
+        }
+
+        /* ITEMS GRID */
+        .items-grid {
+            padding: 14px 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 10px;
+        }
+
+        /* INTERACTIVE CLASS CARD */
+        .class-card {
+            border: 1.5px solid var(--neutral-border);
+            background: var(--neutral-bg);
+            border-radius: 8px;
+            padding: 12px 14px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 115px;
+        }
+
+        .class-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-color: #9ca3af;
+        }
+
+        .class-card:active {
+            transform: scale(0.98);
+        }
+
+        /* State 1: Present (Green) */
+        .class-card.state-present {
+            background-color: var(--green-bg) !important;
+            border-color: var(--green-border) !important;
+        }
+
+        .class-card.state-present .status-badge {
+            background: var(--green-badge) !important;
+            color: #ffffff !important;
+        }
+
+        .class-card.state-present .class-subject {
+            color: var(--green-text) !important;
+        }
+
+        /* State 2: Absent (Red) */
+        .class-card.state-absent {
+            background-color: var(--red-bg) !important;
+            border-color: var(--red-border) !important;
+        }
+
+        .class-card.state-absent .status-badge {
+            background: var(--red-badge) !important;
+            color: #ffffff !important;
+        }
+
+        .class-card.state-absent .class-subject {
+            color: var(--red-text) !important;
+            text-decoration: line-through;
+        }
+
+        /* Inside class-card */
+        .class-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .class-day {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .class-time {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .status-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 12px;
+            background: #e5e7eb;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+
+        .class-subject {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 3px;
+        }
+
+        .class-details {
+            font-size: 11px;
+            color: #4b5563;
+        }
+
+        .class-meta {
+            margin-top: 8px;
+            padding-top: 5px;
+            border-top: 1px dashed rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10.5px;
+            color: #6b7280;
+        }
+
+        .group-tag {
+            background: rgba(0,0,0,0.05);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* INSTRUCTIONS / FOOTER */
+        .instructions-card {
+            background: #ffffff;
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-top: 20px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+        }
+
+        .instructions-card strong {
+            color: var(--text-main);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1f2937;
+            color: #ffffff;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .header-actions, .sync-bar, .jump-bar, .instructions-card { display: none !important; }
+            .week-card { box-shadow: none; break-inside: avoid; margin-bottom: 12px; }
+            .class-card { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-title">
+            <h1>📋 Jurnal & Tracker Prezențe — Psihologie ANUL II (2026–2027)</h1>
+            <p>Universitatea „Ștefan cel Mare” din Suceava | Plan comasare seminarii & laboratoare</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline" onclick="goToCurrentWeek()">📍 Săptămâna Curentă</button>
+            <button class="btn" onclick="syncFromCloud(true)">🔄 Sincronizează</button>
+            <button class="btn btn-outline" onclick="window.print()">🖨️ Tipărește</button>
+            <button class="btn btn-outline" onclick="resetAll()" title="Resetează toate bifările" style="color: #dc2626; border-color: #fca5a5;">🔄 Reset</button>
+        </div>
+    </div>
+
+    <!-- CLOUD SYNC BAR -->
+    <div class="sync-bar">
+        <div class="sync-status">
+            <span class="pulse-dot" id="sync-dot"></span>
+            <span id="sync-text">Conectat la Cloud (Sincronizare Automată Activă)</span>
+        </div>
+        <div style="color: var(--text-muted); font-size: 11.5px;">
+            Dispozitive: 💻 PC ↔ 📱 Telefon &bull; ID: <code>usv-psih-mihai-2026-s1</code>
+        </div>
+    </div>
+
+    <!-- STATS DASHBOARD -->
+    <div class="stats-dashboard">
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Total Seminarii & Lab</div>
+                <div class="stat-num" id="stat-total">70</div>
+            </div>
+            <div class="stat-card present">
+                <div class="stat-label">✅ Prezențe Efectuate</div>
+                <div class="stat-num" id="stat-present" style="color: var(--green-badge);">0</div>
+            </div>
+            <div class="stat-card absent">
+                <div class="stat-label">❌ Absențe Înregistrate</div>
+                <div class="stat-num" id="stat-absent" style="color: var(--red-badge);">0</div>
+            </div>
+            <div class="stat-card rate">
+                <div class="stat-label">Rată Prezență (din trecute)</div>
+                <div class="stat-num" id="stat-rate" style="color: #2563eb;">100%</div>
+            </div>
+        </div>
+
+        <!-- Subject Breakdown -->
+        <div class="subjects-progress">
+            <div class="subjects-title">
+                <span>📊 Monitorizare Prezențe pe Discipline (Prag Minim Obligatoriu: 70%)</span>
+                <span id="overall-status" style="font-size: 11.5px; color: var(--text-muted);">Sincronizat automat în Cloud</span>
+            </div>
+            <div class="progress-grid" id="subjects-container">
+                <!-- Dynamically generated subject bars -->
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK JUMP BAR -->
+    <div class="jump-bar" id="jump-bar">
+        <!-- Dynamically generated jump buttons -->
+    </div>
+
+    <!-- WEEKS CONTAINER -->
+    <div id="weeks-container">
+        <!-- Dynamically generated weeks and cards -->
+    </div>
+
+    <!-- INSTRUCTIONS / FOOTER -->
+    <div class="instructions-card">
+        <strong>💡 Cum funcționează sincronizarea:</strong>
+        <ul style="margin: 6px 0 0 18px;">
+            <li><strong>1 Tap / Click</strong> pe o căsuță ➡️ se face <strong>VERDE (✅ PREZENT)</strong> și se salvează automat în Cloud.</li>
+            <li><strong>Al 2-lea Tap / Click</strong> ➡️ se face <strong>ROȘU (❌ ABSENT)</strong>.</li>
+            <li><strong>Al 3-lea Tap / Click</strong> ➡️ revine la starea inițială <strong>NEUTRALĂ (⚪ Nebifat)</strong>.</li>
+            <li><strong>Sincronizare în timp real:</strong> Dacă bifezi pe telefon în sala de seminar, când deschizi pagina pe calculator acasă modificarea este deja acolo!</li>
+        </ul>
+    </div>
+</div>
+
+<div class="toast" id="toast">Modificările au fost salvate!</div>
+
+<script>
+    const WEEKS_DATA = [{"num": 1, "parity": "impara", "dates": "28 Septembrie – 04 Octombrie 2026", "badge": "🟢 Săptămână Impară", "notice": "Prima săptămână de semestru!", "items": [{"id": "w1_luni_pv", "day": "Luni, 28 Sept", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w1_mar_pv", "day": "Marți, 29 Sept", "time": "14:00 – 16:00", "subject": "Psihologia Vârstelor", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pv_sem"}, {"id": "w1_vin_le", "day": "Vineri, 02 Oct", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w1_vin_pead", "day": "Vineri, 02 Oct", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 2, "parity": "para", "dates": "05 Octombrie – 11 Octombrie 2026", "badge": "🔵 Săptămână Pară", "notice": "Săptămână pară: calupuri compacte Marți (14–18), Miercuri (08–12) și Vineri (16–20).", "items": [{"id": "w2_luni_pv", "day": "Luni, 05 Oct", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w2_mar_pj", "day": "Marți, 06 Oct", "time": "14:00 – 16:00", "subject": "Psihologie Judiciară", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pj_sem"}, {"id": "w2_mar_ps", "day": "Marți, 06 Oct", "time": "16:00 – 18:00", "subject": "Psihologie Socială", "type": "Seminar", "prof": "lect. dr. Andreea Ursu", "room": "PP102", "group": "Gr. 1", "subj_key": "ps_sem"}, {"id": "w2_mie_ncc", "day": "Miercuri, 07 Oct", "time": "08:00 – 10:00", "subject": "Neuroștiințe (NCC)", "type": "Seminar", "prof": "dr. Miralena Tomescu", "room": "PP302", "group": "Gr. 3", "subj_key": "ncc_sem"}, {"id": "w2_mie_tp", "day": "Miercuri, 07 Oct", "time": "10:00 – 12:00", "subject": "Testare Psihologică", "type": "Laborator", "prof": "as. dr. Alina Ionescu-Corbu", "room": "PP102", "group": "Gr. 2B", "subj_key": "tp_lab"}, {"id": "w2_vin_le", "day": "Vineri, 09 Oct", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w2_vin_pead", "day": "Vineri, 09 Oct", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 3, "parity": "impara", "dates": "12 Octombrie – 18 Octombrie 2026", "badge": "🟢 Săptămână Impară", "notice": "Săptămână lejeră: doar Marți 14-16 și Vineri seară.", "items": [{"id": "w3_luni_pv", "day": "Luni, 12 Oct", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w3_mar_pv", "day": "Marți, 13 Oct", "time": "14:00 – 16:00", "subject": "Psihologia Vârstelor", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pv_sem"}, {"id": "w3_vin_le", "day": "Vineri, 16 Oct", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w3_vin_pead", "day": "Vineri, 16 Oct", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 4, "parity": "para", "dates": "19 Octombrie – 25 Octombrie 2026", "badge": "🔵 Săptămână Pară", "notice": "Săptămână pară: calupuri compacte.", "items": [{"id": "w4_luni_pv", "day": "Luni, 19 Oct", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w4_mar_pj", "day": "Marți, 20 Oct", "time": "14:00 – 16:00", "subject": "Psihologie Judiciară", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pj_sem"}, {"id": "w4_mar_ps", "day": "Marți, 20 Oct", "time": "16:00 – 18:00", "subject": "Psihologie Socială", "type": "Seminar", "prof": "lect. dr. Andreea Ursu", "room": "PP102", "group": "Gr. 1", "subj_key": "ps_sem"}, {"id": "w4_mie_ncc", "day": "Miercuri, 21 Oct", "time": "08:00 – 10:00", "subject": "Neuroștiințe (NCC)", "type": "Seminar", "prof": "dr. Miralena Tomescu", "room": "PP302", "group": "Gr. 3", "subj_key": "ncc_sem"}, {"id": "w4_mie_tp", "day": "Miercuri, 21 Oct", "time": "10:00 – 12:00", "subject": "Testare Psihologică", "type": "Laborator", "prof": "as. dr. Alina Ionescu-Corbu", "room": "PP102", "group": "Gr. 2B", "subj_key": "tp_lab"}, {"id": "w4_vin_le", "day": "Vineri, 23 Oct", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w4_vin_pead", "day": "Vineri, 23 Oct", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 5, "parity": "impara", "dates": "26 Octombrie – 01 Noiembrie 2026", "badge": "🟢 Săptămână Impară", "notice": "Săptămână lejeră: Luni, Miercuri, Joi ești 100% la serviciu.", "items": [{"id": "w5_luni_pv", "day": "Luni, 26 Oct", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w5_mar_pv", "day": "Marți, 27 Oct", "time": "14:00 – 16:00", "subject": "Psihologia Vârstelor", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pv_sem"}, {"id": "w5_vin_le", "day": "Vineri, 30 Oct", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w5_vin_pead", "day": "Vineri, 30 Oct", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 6, "parity": "para", "dates": "02 Noiembrie – 08 Noiembrie 2026", "badge": "🔵 Săptămână Pară", "notice": "Săptămână pară.", "items": [{"id": "w6_luni_pv", "day": "Luni, 02 Nov", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w6_mar_pj", "day": "Marți, 03 Nov", "time": "14:00 – 16:00", "subject": "Psihologie Judiciară", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pj_sem"}, {"id": "w6_mar_ps", "day": "Marți, 03 Nov", "time": "16:00 – 18:00", "subject": "Psihologie Socială", "type": "Seminar", "prof": "lect. dr. Andreea Ursu", "room": "PP102", "group": "Gr. 1", "subj_key": "ps_sem"}, {"id": "w6_mie_ncc", "day": "Miercuri, 04 Nov", "time": "08:00 – 10:00", "subject": "Neuroștiințe (NCC)", "type": "Seminar", "prof": "dr. Miralena Tomescu", "room": "PP302", "group": "Gr. 3", "subj_key": "ncc_sem"}, {"id": "w6_mie_tp", "day": "Miercuri, 04 Nov", "time": "10:00 – 12:00", "subject": "Testare Psihologică", "type": "Laborator", "prof": "as. dr. Alina Ionescu-Corbu", "room": "PP102", "group": "Gr. 2B", "subj_key": "tp_lab"}, {"id": "w6_vin_le", "day": "Vineri, 06 Nov", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w6_vin_pead", "day": "Vineri, 06 Nov", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 7, "parity": "impara", "dates": "09 Noiembrie – 15 Noiembrie 2026", "badge": "🟢 Săptămână Impară", "notice": "Jumătatea semestrului! Verifică progresul prezențelor.", "items": [{"id": "w7_luni_pv", "day": "Luni, 09 Nov", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w7_mar_pv", "day": "Marți, 10 Nov", "time": "14:00 – 16:00", "subject": "Psihologia Vârstelor", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pv_sem"}, {"id": "w7_vin_le", "day": "Vineri, 13 Nov", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w7_vin_pead", "day": "Vineri, 13 Nov", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 8, "parity": "para", "dates": "16 Noiembrie – 22 Noiembrie 2026", "badge": "🔵 Săptămână Pară", "notice": "Săptămână pară.", "items": [{"id": "w8_luni_pv", "day": "Luni, 16 Nov", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w8_mar_pj", "day": "Marți, 17 Nov", "time": "14:00 – 16:00", "subject": "Psihologie Judiciară", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pj_sem"}, {"id": "w8_mar_ps", "day": "Marți, 17 Nov", "time": "16:00 – 18:00", "subject": "Psihologie Socială", "type": "Seminar", "prof": "lect. dr. Andreea Ursu", "room": "PP102", "group": "Gr. 1", "subj_key": "ps_sem"}, {"id": "w8_mie_ncc", "day": "Miercuri, 18 Nov", "time": "08:00 – 10:00", "subject": "Neuroștiințe (NCC)", "type": "Seminar", "prof": "dr. Miralena Tomescu", "room": "PP302", "group": "Gr. 3", "subj_key": "ncc_sem"}, {"id": "w8_mie_tp", "day": "Miercuri, 18 Nov", "time": "10:00 – 12:00", "subject": "Testare Psihologică", "type": "Laborator", "prof": "as. dr. Alina Ionescu-Corbu", "room": "PP102", "group": "Gr. 2B", "subj_key": "tp_lab"}, {"id": "w8_vin_le", "day": "Vineri, 20 Nov", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w8_vin_pead", "day": "Vineri, 20 Nov", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 9, "parity": "impara", "dates": "23 Noiembrie – 29 Noiembrie 2026", "badge": "🟢 Săptămână Impară", "notice": "Săptămână lejeră.", "items": [{"id": "w9_luni_pv", "day": "Luni, 23 Nov", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w9_mar_pv", "day": "Marți, 24 Nov", "time": "14:00 – 16:00", "subject": "Psihologia Vârstelor", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pv_sem"}, {"id": "w9_vin_le", "day": "Vineri, 27 Nov", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w9_vin_pead", "day": "Vineri, 27 Nov", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 10, "parity": "para", "dates": "30 Noiembrie – 06 Decembrie 2026", "badge": "🔵 Săptămână Pară", "notice": "⚠️ Zile Libere Legale: Luni 30 Nov (Sf. Andrei) & Marți 01 Dec (Ziua Națională)! Verifică dacă Marți se recuperează.", "items": [{"id": "w10_mar_pj", "day": "Marți, 01 Dec", "time": "14:00 – 16:00", "subject": "Psihologie Judiciară", "type": "Seminar (Zilnic/Recuperare)", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pj_sem"}, {"id": "w10_mar_ps", "day": "Marți, 01 Dec", "time": "16:00 – 18:00", "subject": "Psihologie Socială", "type": "Seminar (Zilnic/Recuperare)", "prof": "lect. dr. Andreea Ursu", "room": "PP102", "group": "Gr. 1", "subj_key": "ps_sem"}, {"id": "w10_mie_ncc", "day": "Miercuri, 02 Dec", "time": "08:00 – 10:00", "subject": "Neuroștiințe (NCC)", "type": "Seminar", "prof": "dr. Miralena Tomescu", "room": "PP302", "group": "Gr. 3", "subj_key": "ncc_sem"}, {"id": "w10_mie_tp", "day": "Miercuri, 02 Dec", "time": "10:00 – 12:00", "subject": "Testare Psihologică", "type": "Laborator", "prof": "as. dr. Alina Ionescu-Corbu", "room": "PP102", "group": "Gr. 2B", "subj_key": "tp_lab"}, {"id": "w10_vin_le", "day": "Vineri, 04 Dec", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w10_vin_pead", "day": "Vineri, 04 Dec", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 11, "parity": "impara", "dates": "07 Decembrie – 13 Decembrie 2026", "badge": "🟢 Săptămână Impară", "notice": "Săptămână lejeră.", "items": [{"id": "w11_luni_pv", "day": "Luni, 07 Dec", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w11_mar_pv", "day": "Marți, 08 Dec", "time": "14:00 – 16:00", "subject": "Psihologia Vârstelor", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pv_sem"}, {"id": "w11_vin_le", "day": "Vineri, 11 Dec", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w11_vin_pead", "day": "Vineri, 11 Dec", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 12, "parity": "para", "dates": "14 Decembrie – 20 Decembrie 2026", "badge": "🔵 Săptămână Pară", "notice": "Penultima săptămână înainte de vacanța de iarnă.", "items": [{"id": "w12_luni_pv", "day": "Luni, 14 Dec", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w12_mar_pj", "day": "Marți, 15 Dec", "time": "14:00 – 16:00", "subject": "Psihologie Judiciară", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pj_sem"}, {"id": "w12_mar_ps", "day": "Marți, 15 Dec", "time": "16:00 – 18:00", "subject": "Psihologie Socială", "type": "Seminar", "prof": "lect. dr. Andreea Ursu", "room": "PP102", "group": "Gr. 1", "subj_key": "ps_sem"}, {"id": "w12_mie_ncc", "day": "Miercuri, 16 Dec", "time": "08:00 – 10:00", "subject": "Neuroștiințe (NCC)", "type": "Seminar", "prof": "dr. Miralena Tomescu", "room": "PP302", "group": "Gr. 3", "subj_key": "ncc_sem"}, {"id": "w12_mie_tp", "day": "Miercuri, 16 Dec", "time": "10:00 – 12:00", "subject": "Testare Psihologică", "type": "Laborator", "prof": "as. dr. Alina Ionescu-Corbu", "room": "PP102", "group": "Gr. 2B", "subj_key": "tp_lab"}, {"id": "w12_vin_le", "day": "Vineri, 18 Dec", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w12_vin_pead", "day": "Vineri, 18 Dec", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}, {"num": 13, "parity": "impara", "dates": "21 Decembrie – 24 Decembrie 2026", "badge": "🟢 Săptămână Impară", "notice": "🎄 Ultima săptămână înainte de Crăciun (Joi 24 Decembrie e ultima zi; Vineri 25 Decembrie e Crăciunul / Vacanță).", "items": [{"id": "w13_luni_pv", "day": "Luni, 21 Dec", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w13_mar_pv", "day": "Marți, 22 Dec", "time": "14:00 – 16:00", "subject": "Psihologia Vârstelor", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pv_sem"}]}, {"num": 14, "parity": "para", "dates": "11 Ianuarie – 17 Ianuarie 2027", "badge": "🔵 Săptămână Pară", "notice": "🏁 Ultima săptămână de activitate didactică! Încheierea situațiilor la seminarii și laboratoare.", "items": [{"id": "w14_luni_pv", "day": "Luni, 11 Ian", "time": "17:00 – 19:00", "subject": "Psihologia Vârstelor", "type": "Curs Online (Opțional)", "prof": "lect. dr. Ștefan Agrigoroaei", "room": "_online", "group": "Comun", "subj_key": "pv_curs"}, {"id": "w14_mar_pj", "day": "Marți, 12 Ian", "time": "14:00 – 16:00", "subject": "Psihologie Judiciară", "type": "Seminar", "prof": "dr. Ana-Maria Andrei", "room": "PP304", "group": "Gr. 1", "subj_key": "pj_sem"}, {"id": "w14_mar_ps", "day": "Marți, 12 Ian", "time": "16:00 – 18:00", "subject": "Psihologie Socială", "type": "Seminar", "prof": "lect. dr. Andreea Ursu", "room": "PP102", "group": "Gr. 1", "subj_key": "ps_sem"}, {"id": "w14_mie_ncc", "day": "Miercuri, 13 Ian", "time": "08:00 – 10:00", "subject": "Neuroștiințe (NCC)", "type": "Seminar", "prof": "dr. Miralena Tomescu", "room": "PP302", "group": "Gr. 3", "subj_key": "ncc_sem"}, {"id": "w14_mie_tp", "day": "Miercuri, 13 Ian", "time": "10:00 – 12:00", "subject": "Testare Psihologică", "type": "Laborator", "prof": "as. dr. Alina Ionescu-Corbu", "room": "PP102", "group": "Gr. 2B", "subj_key": "tp_lab"}, {"id": "w14_vin_le", "day": "Vineri, 15 Ian", "time": "16:00 – 18:00", "subject": "Limba Engleză", "type": "Seminar", "prof": "conf. dr. Nicoleta Moroșan", "room": "PP304", "group": "Gr. 3", "subj_key": "le_sem"}, {"id": "w14_vin_pead", "day": "Vineri, 15 Ian", "time": "18:00 – 20:00", "subject": "PEAD — Statistică", "type": "Laborator", "prof": "dr. Marius Marici", "room": "PP102", "group": "Gr. 3A", "subj_key": "pead_lab"}]}];
+
+    const SUBJECTS = {
+        "pead_lab": { name: "PEAD (Statistică)", total: 14, min: 10, type: "Lab" },
+        "le_sem": { name: "Limba Engleză", total: 14, min: 10, type: "Sem" },
+        "pv_sem": { name: "Psihologia Vârstelor", total: 7, min: 5, type: "Sem" },
+        "pj_sem": { name: "Psihologie Judiciară", total: 7, min: 5, type: "Sem" },
+        "ps_sem": { name: "Psihologie Socială", total: 7, min: 5, type: "Sem" },
+        "ncc_sem": { name: "Neuroștiințe (NCC)", total: 7, min: 5, type: "Sem" },
+        "tp_lab": { name: "Testare Psihologică", total: 7, min: 5, type: "Lab" }
+    };
+
+    const STORAGE_KEY = "usv_psih_an2_attendance_tracker_2026";
+    const CLOUD_SYNC_URL = "https://mantledb.sh/v2/usv-psih-mihai-2026-s1/attendance";
+
+    let attendanceState = {};
+    let isSyncing = false;
+
+    function loadLocalState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) attendanceState = JSON.parse(raw);
+        } catch (e) {
+            console.error("Local storage error:", e);
+            attendanceState = {};
+        }
+    }
+
+    function saveLocalState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(attendanceState));
+        } catch (e) {
+            console.error("Local storage save error:", e);
+        }
+    }
+
+    // CLOUD SYNC: Send to Cloud
+    async function syncToCloud() {
+        setSyncStatus("loading", "Se trimite în Cloud...");
+        try {
+            attendanceState._updated_at = Date.now();
+            const res = await fetch(CLOUD_SYNC_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(attendanceState)
+            });
+            if (res.ok) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                setSyncStatus("success", `Sincronizat cu Cloud (${timeStr})`);
+                showToast("Sincronizat cu succes în Cloud!");
+            } else {
+                setSyncStatus("offline", "Salvat local (Eroare Cloud)");
+            }
+        } catch (err) {
+            setSyncStatus("offline", "Salvat local (Mod Offline)");
+        }
+    }
+
+    // CLOUD SYNC: Fetch from Cloud
+    async function syncFromCloud(showFeedback = false) {
+        if (isSyncing) return;
+        isSyncing = true;
+        if (showFeedback) setSyncStatus("loading", "Se descarcă din Cloud...");
+        
+        try {
+            const res = await fetch(CLOUD_SYNC_URL, { cache: "no-store" });
+            if (res.ok) {
+                const cloudData = await res.json();
+                if (cloudData && typeof cloudData === "object") {
+                    const localTs = attendanceState._updated_at || 0;
+                    const cloudTs = cloudData._updated_at || 0;
+                    
+                    // Merge: if cloud is newer or equal, take it
+                    if (cloudTs >= localTs || Object.keys(attendanceState).length === 0) {
+                        attendanceState = cloudData;
+                        saveLocalState();
+                        refreshAllUI();
+                    } else if (localTs > cloudTs) {
+                        // Local is newer (e.g. offline edits), push to cloud
+                        syncToCloud();
+                    }
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    setSyncStatus("success", `Sincronizat cu Cloud (${timeStr})`);
+                    if (showFeedback) showToast("Actualizat din Cloud!");
+                }
+            } else {
+                setSyncStatus("offline", "Mod Offline (Salvat local)");
+            }
+        } catch (err) {
+            setSyncStatus("offline", "Mod Offline (Salvat local)");
+        } finally {
+            isSyncing = false;
+        }
+    }
+
+    function setSyncStatus(type, message) {
+        const dot = document.getElementById("sync-dot");
+        const txt = document.getElementById("sync-text");
+        if (!dot || !txt) return;
+
+        txt.innerText = message;
+        if (type === "success") {
+            dot.style.background = "#10b981";
+            dot.style.animation = "pulse 2s infinite";
+        } else if (type === "loading") {
+            dot.style.background = "#f59e0b";
+            dot.style.animation = "pulse 0.8s infinite";
+        } else {
+            dot.style.background = "#ef4444";
+            dot.style.animation = "none";
+        }
+    }
+
+    function showToast(msg = "Modificările au fost salvate!") {
+        const toast = document.getElementById("toast");
+        toast.innerText = msg;
+        toast.classList.add("show");
+        clearTimeout(toast._timeout);
+        toast._timeout = setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function getCurrentWeekNum() {
+        const today = new Date();
+        const start = new Date(2026, 8, 28); // Month is 0-indexed: 8 is September
+        const diffTime = today - start;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays < 0) return 1;
+        let w = Math.floor(diffDays / 7) + 1;
+        if (w > 14) return 14;
+        return w;
+    }
+
+    function renderJumpBar() {
+        const bar = document.getElementById("jump-bar");
+        bar.innerHTML = "";
+        const curW = getCurrentWeekNum();
+
+        WEEKS_DATA.forEach(w => {
+            const btn = document.createElement("button");
+            btn.className = "jump-btn" + (w.num === curW ? " current" : "");
+            btn.innerHTML = `S${w.num} <small>(${w.parity === "impara" ? "Imp" : "Par"})</small>`;
+            btn.onclick = () => {
+                const el = document.getElementById(`week-${w.num}`);
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+            };
+            bar.appendChild(btn);
+        });
+    }
+
+    function renderWeeks() {
+        const container = document.getElementById("weeks-container");
+        container.innerHTML = "";
+        const curW = getCurrentWeekNum();
+
+        WEEKS_DATA.forEach(w => {
+            const isCurrent = (w.num === curW);
+            const card = document.createElement("div");
+            card.className = "week-card" + (isCurrent ? " is-current" : "");
+            card.id = `week-${w.num}`;
+
+            const badgeClass = w.parity === "impara" ? "badge-impara" : "badge-para";
+            const parityText = w.parity === "impara" ? "🟢 Săptămână Impară" : "🔵 Săptămână Pară";
+
+            card.innerHTML = `
+                <div class="week-header">
+                    <div class="week-title">
+                        <span>Săptămâna ${w.num}</span>
+                        <span class="week-badge ${badgeClass}">${parityText}</span>
+                        ${isCurrent ? '<span class="week-badge badge-current">📍 Săptămâna Curentă</span>' : ''}
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;">
+                        📅 ${w.dates}
+                    </div>
+                </div>
+                ${w.notice ? `<div class="week-notice">${w.notice}</div>` : ''}
+                <div class="items-grid" id="items-week-${w.num}"></div>
+            `;
+
+            container.appendChild(card);
+
+            const grid = card.querySelector(`#items-week-${w.num}`);
+            w.items.forEach(item => {
+                const itemEl = createClassCard(item, w.num);
+                grid.appendChild(itemEl);
+            });
+        });
+    }
+
+    function createClassCard(item, weekNum) {
+        const el = document.createElement("div");
+        el.className = "class-card";
+        el.id = item.id;
+
+        const currentState = attendanceState[item.id] || "none";
+        applyCardState(el, currentState);
+
+        el.innerHTML = `
+            <div>
+                <div class="class-top">
+                    <div>
+                        <div class="class-day">${item.day}</div>
+                        <div class="class-time">⏰ ${item.time}</div>
+                    </div>
+                    <div class="status-badge" id="badge-${item.id}">⚪ Nebifat</div>
+                </div>
+                <div class="class-subject">${item.subject}</div>
+                <div class="class-details">${item.type} &bull; ${item.prof}</div>
+            </div>
+            <div class="class-meta">
+                <span>📍 ${item.room}</span>
+                <span class="group-tag">${item.group}</span>
+            </div>
+        `;
+
+        updateBadgeText(el.querySelector(".status-badge"), currentState);
+
+        el.onclick = () => {
+            let nextState = "none";
+            const curr = attendanceState[item.id] || "none";
+            if (curr === "none") nextState = "present";
+            else if (curr === "present") nextState = "absent";
+            else if (curr === "absent") nextState = "none";
+
+            attendanceState[item.id] = nextState;
+            applyCardState(el, nextState);
+            updateBadgeText(el.querySelector(".status-badge"), nextState);
+            saveLocalState();
+            updateStats();
+            syncToCloud();
+        };
+
+        return el;
+    }
+
+    function applyCardState(el, state) {
+        el.classList.remove("state-present", "state-absent");
+        if (state === "present") el.classList.add("state-present");
+        else if (state === "absent") el.classList.add("state-absent");
+    }
+
+    function updateBadgeText(badgeEl, state) {
+        if (!badgeEl) return;
+        if (state === "present") {
+            badgeEl.innerText = "✅ PREZENT";
+        } else if (state === "absent") {
+            badgeEl.innerText = "❌ ABSENT";
+        } else {
+            badgeEl.innerText = "⚪ Nebifat";
+        }
+    }
+
+    function refreshAllUI() {
+        WEEKS_DATA.forEach(w => {
+            w.items.forEach(item => {
+                const el = document.getElementById(item.id);
+                if (el) {
+                    const st = attendanceState[item.id] || "none";
+                    applyCardState(el, st);
+                    updateBadgeText(el.querySelector(".status-badge"), st);
+                }
+            });
+        });
+        updateStats();
+    }
+
+    function updateStats() {
+        let totalItems = 0;
+        let presentCount = 0;
+        let absentCount = 0;
+
+        const subjStats = {};
+        Object.keys(SUBJECTS).forEach(k => {
+            subjStats[k] = { present: 0, absent: 0 };
+        });
+
+        WEEKS_DATA.forEach(w => {
+            w.items.forEach(it => {
+                if (it.subj_key && SUBJECTS[it.subj_key]) {
+                    totalItems++;
+                    const st = attendanceState[it.id] || "none";
+                    if (st === "present") {
+                        presentCount++;
+                        subjStats[it.subj_key].present++;
+                    } else if (st === "absent") {
+                        absentCount++;
+                        subjStats[it.subj_key].absent++;
+                    }
+                }
+            });
+        });
+
+        document.getElementById("stat-total").innerText = totalItems;
+        document.getElementById("stat-present").innerText = presentCount;
+        document.getElementById("stat-absent").innerText = absentCount;
+
+        const attendedOrMissed = presentCount + absentCount;
+        let rate = 100;
+        if (attendedOrMissed > 0) {
+            rate = Math.round((presentCount / attendedOrMissed) * 100);
+        }
+        document.getElementById("stat-rate").innerText = rate + "%";
+
+        const subjContainer = document.getElementById("subjects-container");
+        subjContainer.innerHTML = "";
+
+        Object.keys(SUBJECTS).forEach(k => {
+            const conf = SUBJECTS[k];
+            const p = subjStats[k].present;
+            const a = subjStats[k].absent;
+            const pct = Math.min(100, Math.round((p / conf.total) * 100));
+
+            let barColor = "#2a9d8f";
+            if (p >= conf.min) {
+                barColor = "#10b981";
+            } else if (a > (conf.total - conf.min)) {
+                barColor = "#ef4444";
+            } else {
+                barColor = "#3b82f6";
+            }
+
+            const box = document.createElement("div");
+            box.className = "subj-bar-box";
+            box.innerHTML = `
+                <div class="subj-bar-header">
+                    <span>${conf.name} <small style="color: #6b7280;">(${conf.type})</small></span>
+                    <span><strong>${p}</strong> / ${conf.total} <small style="color: #6b7280;">(min ${conf.min})</small></span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill" style="width: ${pct}%; background-color: ${barColor};"></div>
+                </div>
+            `;
+            subjContainer.appendChild(box);
+        });
+    }
+
+    function goToCurrentWeek() {
+        const curW = getCurrentWeekNum();
+        const el = document.getElementById(`week-${curW}`);
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            el.style.transition = "all 0.5s ease";
+            el.style.boxShadow = "0 0 0 4px #f59e0b";
+            setTimeout(() => {
+                el.style.boxShadow = "";
+            }, 1800);
+        }
+    }
+
+    function resetAll() {
+        if (confirm("Ești sigur că vrei să resetezi toate prezențele bifate? Această acțiune nu poate fi anulată.")) {
+            attendanceState = { _updated_at: Date.now() };
+            saveLocalState();
+            syncToCloud();
+            refreshAllUI();
+        }
+    }
+
+    // Auto-sync when window is focused or tab becomes active
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) syncFromCloud();
+    });
+    window.addEventListener("focus", () => syncFromCloud());
+
+    // Auto-poll cloud every 15 seconds
+    setInterval(syncFromCloud, 15000);
+
+    // Initial sequence
+    loadLocalState();
+    renderJumpBar();
+    renderWeeks();
+    updateStats();
+    syncFromCloud();
+</script>
+
+</body>
+</html>
